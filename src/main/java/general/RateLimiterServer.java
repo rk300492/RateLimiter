@@ -3,6 +3,7 @@ package general;
 import data.CommunicationCodec;
 import data.RateLimiterRequest;
 import data.RateLimiterResponse;
+import throttling.RateLimiterThrottling;
 import util.Constants.*;
 
 import java.io.*;
@@ -10,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -24,6 +26,7 @@ public class RateLimiterServer {
     public final ExecutorService executor;
     public final int port;
     public final Map<String, Integer> clientCounter;
+    public static final RateLimiterThrottling throttling = new RateLimiterThrottling();
 
     public RateLimiterServer(int port, int threadCount) {
         this.port = port;
@@ -47,6 +50,11 @@ public class RateLimiterServer {
         }
     }
 
+
+    public String getFailure () {
+        final String status = "429 MOFOS !!!";
+        return status;
+    }
 
     public String getStatus() {
         final String url = "https://airtasker.com";
@@ -116,7 +124,7 @@ public class RateLimiterServer {
                     } else if (RequestType.GET.equals(request.getRequestType())) {
 
                         // Step 4: Prepare and Send a post response
-                        final String response = prepareResponse(request.getRepetition());
+                        final String response = prepareResponse(request.getClientID(),request.getRepetition());
                         final RateLimiterResponse postResponse =
                                 new RateLimiterResponse(id, request.getRequestID(), ResponseStatus.SUCCESS, ResponseType.POST, response);
                         sendResponse(CommunicationCodec.encodeResponse(postResponse));
@@ -147,14 +155,14 @@ public class RateLimiterServer {
         }
 
 
-        public String prepareResponse(int repetition) throws Exception {
+        public String prepareResponse(String clientID, int repetition) throws Exception {
             final StringBuilder builder = new StringBuilder();
 
             log.info("Client wants to ping Airtasker website with a repetition of:" + repetition);
 
             for (int i = 0; i < repetition; i++) {
                 // Step 1: ping the http url to get the status
-                final String status = getStatus();
+                final String status = throttling.shouldThrottle(clientID, LocalDateTime.now()) ? getFailure() : getStatus();
 
                 // Step 2: Append with the url status
                 builder.append("/n" + status);
