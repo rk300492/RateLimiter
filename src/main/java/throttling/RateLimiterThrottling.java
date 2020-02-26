@@ -43,5 +43,11 @@ public class RateLimiterThrottling {
         return false;
     }
 
+    public LocalDateTime getClientEndTime (String clientID){
+        return clientToClientEndTimeAndCount.containsKey(clientID) ?  clientToClientEndTimeAndCount.get(clientID).getKey() : null;
+    }
 
+    public int getClientCount (String clientID){
+        return clientToClientEndTimeAndCount.containsKey(clientID) ?  clientToClientEndTimeAndCount.get(clientID).getValue().get() : 0;
+    }
 }

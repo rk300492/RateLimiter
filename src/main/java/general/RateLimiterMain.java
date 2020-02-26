@@ -2,9 +2,10 @@ package general;
 
 public class RateLimiterMain {
 
+    public static final String mode = System.getProperty("rl.mode" , "CLIENT");
+    public static final int port = Integer.parseInt(System.getProperty("rl.port" , "8010"));
+
     public static void main (String[] args){
-        final String mode = System.getProperty("rl.mode" , "CLIENT");
-        final int port = Integer.parseInt(System.getProperty("rl.port" , "8010"));
 
         if("SERVER".equalsIgnoreCase(mode)){
             final int threadCount = Integer.parseInt(System.getProperty("rl.threads" , "10"));

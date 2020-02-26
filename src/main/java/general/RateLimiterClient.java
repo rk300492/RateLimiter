@@ -3,13 +3,15 @@ package general;
 import data.CommunicationCodec;
 import data.RateLimiterRequest;
 import data.RateLimiterResponse;
-import util.Constants.*;
+import util.Constants.RequestType;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
 import java.util.Scanner;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 // Single threaded client - Pretty dumb
@@ -29,30 +31,33 @@ public class RateLimiterClient {
 
     public void start() {
 
-            try (Socket s = new Socket(host, port)) {
-                final OutputStream outputStream = s.getOutputStream();
-                final InputStream inputStream = s.getInputStream();
+            try (AsynchronousSocketChannel s = AsynchronousSocketChannel.open()) {
+                s.connect(new InetSocketAddress(host,port)).get();
 
                 // Step 1: Grab the connection response from the server to get the client id
-                final RateLimiterResponse connectionResponse = CommunicationCodec.decodeResponse(readResponse(inputStream));
+                final RateLimiterResponse connectionResponse = CommunicationCodec.decodeResponse(readAsync(s));
                 final String clientID = connectionResponse.getClientID();
+                log.info("Server set up client connection id:" + clientID);
+
 
                 do {
                     // Step 1: Prepare and Send the request map
 
                     final RateLimiterRequest request = prepareRequest(clientID);
-                    sendRequest(CommunicationCodec.encodeRequest(request), outputStream);
+                    sendAsync(CommunicationCodec.encodeRequest(request),s);
 
                     // Step 2: Process the response as they keep coming
-                    processResponse(readResponse(inputStream));
+                    final RateLimiterResponse response = CommunicationCodec.decodeResponse(readAsync(s));
+                    processResponse(response);
 
                 } while (shouldContinue());
 
                 final RateLimiterRequest disconnectRequest = new RateLimiterRequest(clientID,clientRequestID++,RequestType.CLOSE,0);
-                sendRequest(CommunicationCodec.encodeRequest(disconnectRequest),outputStream);
+                sendAsync(CommunicationCodec.encodeRequest(disconnectRequest),s);
 
             } catch (Exception ex) {
                 log.severe("Error trying to setup the client : " + ex.getMessage());
+                ex.printStackTrace();
             }
 
 
@@ -77,22 +82,27 @@ public class RateLimiterClient {
     }
 
 
-    private void sendRequest(String request, OutputStream socketOutputStream) throws Exception {
-        final PrintWriter pw = new PrintWriter(new OutputStreamWriter(socketOutputStream), true);
-        pw.println(request);
-        pw.flush();
-
+    private Integer sendAsync(String request, AsynchronousSocketChannel s) throws Exception {
+        ByteBuffer buf = ByteBuffer.wrap(request.getBytes());
+        final Future<Integer> write = s.write(buf);
+        buf.clear();
+        return write.get() ;
 
     }
 
-    private String readResponse (InputStream socketInputStream) throws Exception{
-        final BufferedReader in = new BufferedReader(new InputStreamReader(socketInputStream));
-        return in.readLine();
+    private String readAsync ( AsynchronousSocketChannel s) throws Exception {
+        ByteBuffer buf = ByteBuffer.allocate(1024);
+        final Future<Integer> response = s.read(buf);
+        final Integer length = response.get();
+        final ByteBuffer responseBuf = ByteBuffer.allocate(length);
+        responseBuf.put(buf.array(), 0, length);
+        buf.clear();
+        return new String(responseBuf.array());
     }
 
-    private void processResponse(String responseString) throws Exception {
-        final RateLimiterResponse response = CommunicationCodec.decodeResponse(responseString);
 
+
+    private void processResponse(RateLimiterResponse response) throws Exception {
         final String data = response.getResponse();
         System.out.println(data);
 
