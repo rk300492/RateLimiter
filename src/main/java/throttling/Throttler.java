@@ -7,15 +7,17 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 // "THE" Rate limiting module
-public class RateLimiterThrottling {
+// Todo : Give a detailed explanation of what this class does.
+public class Throttler {
 
     final Map<String, Pair<LocalDateTime, AtomicInteger>> clientToClientEndTimeAndCount;
 
-    public RateLimiterThrottling() {
-        clientToClientEndTimeAndCount = new HashMap<>();
+    public Throttler() {
+        clientToClientEndTimeAndCount = new ConcurrentHashMap<>();
     }
 
 
