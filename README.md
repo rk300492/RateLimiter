@@ -39,14 +39,16 @@ The module is constructed in a pretty self explanatory manner. The "Main.java" c
 *******
 #### FEATURES:
 
-
 *******
 #### IMPROVEMENTS:
 
 *******
 #### EXAMPLE RUN:
 
+Below shows a trial run of the application: 
+
 ##### *Server side:*
+
 ~~~
 Feb. 27, 2020 7:20:49 PM server.Server start
 INFO: Beginning the rate limiting module server ...
@@ -82,7 +84,9 @@ INFO: Received request from client:ClientID=f10785dd-6511-4fa2-91b4-43e3a949d0ac
 Feb. 27, 2020 7:22:32 PM server.Server$ServerSocketTask processRequest
 INFO: Client:f10785dd-6511-4fa2-91b4-43e3a949d0ac has requested to close this connection with id:f10785dd-6511-4fa2-91b4-43e3a949d0ac
 ~~~
+
 ##### *Client Side:*
+
 ~~~
 Feb. 27, 2020 7:21:02 PM client.Client start
 INFO: Client has begun processing ...
