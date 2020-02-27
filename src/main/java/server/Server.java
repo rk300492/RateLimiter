@@ -220,7 +220,7 @@ public class Server {
 					statusCode = 429;
 				} else {
 					// Step 1b: else ping the http and send back the response.
-					statusCode = ServerUtil.getStatus();
+					statusCode = ServerUtil.getStatus(Constants.URL);
 				}
 
 				// Step 2:  Collect the ping status count

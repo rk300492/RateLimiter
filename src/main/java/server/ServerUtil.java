@@ -19,8 +19,7 @@ public class ServerUtil {
         return ("Too many request has been received from this client, please try your requests after " + formatDateTime);
 	}
 
-	public static int getStatus() {
-		final String url = "https://airtasker.com";
+	public static int getStatus(String url) {
 		String result;
 		int code;
 

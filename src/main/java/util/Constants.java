@@ -19,6 +19,7 @@ public class Constants {
 		CLOSE
 	}
 
+	public static final String URL = "https://airtasker.com";
 	public static final int ARBITRARY_SIZE = 1024;
 
 }
