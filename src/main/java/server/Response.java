@@ -24,10 +24,11 @@ public class Response {
 	final String response;
 
 	public Response(String clientID, ResponseStatus responseStatus, ResponseType responseType, String response) {
-		this(clientID, DEFAULT_RID, responseStatus, responseType, response);
+		this(clientID, DEFAULT_RID, responseStatus, responseType,response);
 	}
 
-	public Response(String clientID, int requestID, ResponseStatus responseStatus, ResponseType responseType, String response) {
+	public Response(String clientID, int requestID, ResponseStatus responseStatus, ResponseType responseType,
+					String response) {
 		this.clientID = clientID;
 		this.requestID = requestID;
 		this.responseStatus = responseStatus;
@@ -70,15 +71,16 @@ public class Response {
 	// A better way to do this would be to establish a proper encoding and decoding technique - but for now this should do.
 	@Override
 	public String toString() {
-		// String => ClientID=<cid>,RequestID=<rid>,ResponseStatus=<status>,ResponseType=<type>,Response=<response string>
+		// String => ClientID=<cid>,RequestID=<rid>,ResponseStatus=<status>,ResponseType=<type>,
+		// Response=<response string>
 		final StringBuilder builder = new StringBuilder();
 
 		builder.append("ClientID=" + clientID);
 		builder.append(",RequestID=" + String.valueOf(requestID));
 		builder.append(",ResponseStatus=" + responseStatus.toString());
 		builder.append(",ResponseType=" + responseType.toString());
-		builder.append(",Response=");
-		builder.append(response);
+		builder.append(",Response="); builder.append(response);
+
 
 		return builder.toString();
 	}

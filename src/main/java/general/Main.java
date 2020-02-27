@@ -12,8 +12,11 @@ public class Main {
 
     public static void main (String[] args){
 
+        // Depending on the VM args - the server or the client section of the code executes.
         if("SERVER".equalsIgnoreCase(mode)){
-            Server.getInstance(host,port).start();
+            final int throttleLimit = Integer.parseInt(System.getProperty("rl.throttleLimit" , "100"));
+            final int minutesToThrottle = Integer.parseInt(System.getProperty("rl.minutesToThrottle" , "60"));
+            Server.getInstance(host,port,throttleLimit,minutesToThrottle).start();
         }else if ("CLIENT".equalsIgnoreCase(mode)) {
             new Client(host , port).start();
         }
