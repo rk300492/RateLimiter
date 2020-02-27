@@ -35,12 +35,17 @@ The module is constructed in a pretty self explanatory manner. The "Main.java" c
 
 *******
 #### ARCHITECTURE DIAGRAM:
+![GitHub Logo](/architecture.png)
 
 *******
-#### FEATURES:
+#### FEATURES & IMPROVEMENTS:
 
-*******
-#### IMPROVEMENTS:
+* The server is asynchronous and multi threaded so scalability wise, it cant handle more requests. 
+* The throttling mechanism is modular and easy to configure . Also it can be made more complex depending on the scenario.
+* This code can be extended to actually receive a valid http request and contact the http service to get back the webpage. Meaning, this server can actually be extended to service the webpage directly instead of console outputs. 
+* Some factors such as throttle factor can reside in a config file instead of being in a VM argument. 
+* Certainly, a better exception handling system can be designed here. 
+* Pings to http service can also be made asynchronous making the server to handle other requests instead of waiting on the pings.
 
 *******
 #### EXAMPLE RUN:
