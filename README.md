@@ -112,7 +112,6 @@ Process finished with exit code 0
 *******
 
 #### REFERENCES:
-*******
 *Some referred Rate Limiter examples:*
 
 * [Rate Limiter Example in Java from Medium](https://medium.com/@aayushbhatnagar_10462/rate-limiting-implementation-example-in-java-7831923e5de3)
@@ -121,3 +120,4 @@ Process finished with exit code 0
 * [Multi Threading example](https://dzone.com/articles/java-concurrency-multi-threading-with-executorserv)
 * [Asyn Socket Server Design](https://www.baeldung.com/java-nio2-async-socket-channel#the-server-with-completionhandler)
 
+*******
